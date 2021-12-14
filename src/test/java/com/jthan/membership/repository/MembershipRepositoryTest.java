@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -55,6 +57,44 @@ public class MembershipRepositoryTest {
 		assertThat(findResult.getPoint()).isEqualTo(10000);
 
 	}
+
+	@Test
+	public void 멤버십조회_사이즈가0() {
+		// given
+
+		// when
+		List<Membership> result = membershipRepository.findAllByUserId("userId");
+
+		// then
+		assertThat(result.size()).isEqualTo(0);
+	}
+
+	@Test
+	public void 멤버십조회_사이즈가2() {
+		// given
+		final Membership naverMemberShip = Membership.builder()
+				.userId("userId")
+				.membershipType(MembershipType.NAVER)
+				.point(10000)
+				.build();
+
+		final Membership kakaoMemberShip = Membership.builder()
+				.userId("userId")
+				.membershipType(MembershipType.KAKAO)
+				.point(10000)
+				.build();
+
+		membershipRepository.save(naverMemberShip);
+		membershipRepository.save(kakaoMemberShip);
+
+		// when
+		List<Membership> result = membershipRepository.findAllByUserId("userUd");
+
+		// then
+		assertThat(result.size()).isEqualTo(2);
+	}
+
+
 }
 
 
